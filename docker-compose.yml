@@ -1,0 +1,56 @@
+version: "3"
+
+services:
+  saturne:
+    container_name: saturne
+    ports:
+      - "4200:4000"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # command: npm run start_pm2
+    command: yarn start
+    volumes:
+      - .:/app
+    expose:
+      - 4000
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DB_PASSWORD: YLAcXImLz-Bx1998
+      DATABASE_USER: taas
+      BOT_KEY: 1910272288:AAHRcPxWheGsu9USbfAaZd0XmcqZF1_5kOA
+    depends_on:
+      - saturne_mongo
+    # labels:
+    #   - traefik.enable=true
+    #   - traefik.http.routers.saturne.rule=Host(`saturne.vaguenone.net`,`www.saturne.vaguenone.net`)
+    #   - traefik.http.routers.saturne.tls=true
+    #   - traefik.http.routers.saturne.tls.certresolver=le
+    #   - traefik.port=4000
+    #   - traefik.docker.network=traefik-proxy
+    networks:
+      - default
+      # - traefik-proxy
+    restart: unless-stopped
+
+  saturne_mongo:
+    image: mongo
+    container_name: saturne_mongo
+    ports:
+      - "2851:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: taas
+      MONGO_INITDB_ROOT_PASSWORD: YLAcXImLz-Bx1998
+    volumes:
+      - saturne_mongo:/data/db
+    restart: unless-stopped
+
+volumes:
+  saturne_mongo:
+
+networks:
+  default:
+    name: saturne
+  # traefik-proxy:
+  #   external: true

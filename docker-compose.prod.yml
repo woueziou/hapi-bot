@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+  altenwerth:
+    container_name: altenwerth
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # command: npm run start_pm2
+    command: npm run start
+    volumes:
+      - .:/app
+    expose:
+      - 4000
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_PWD: YLAcXImLz-Bx1998
+      DATABASE_USER: taas
+      BOT_KEY: 1966447257:AAGBlnrWvIMaYhjQv5s7B70vWQd7eWQ72yA
+    # depends_on:
+    #   - mongo_db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.altenwerth.rule=Host(`altenwerthbot.vaguenone.net`,`www.altenwerthbot.vaguenone.net`)
+      - traefik.http.routers.altenwerth.tls=true
+      - traefik.http.routers.altenwerth.tls.certresolver=le
+      - traefik.port=4000
+      - traefik.docker.network=traefik-proxy
+    networks:
+      # - default
+      - database_node
+      - traefik-proxy
+    restart: unless-stopped
+
+  
+
+networks:
+  # default:
+  #   name: altenwerth
+  traefik-proxy:
+    external: true
+  database_node:
+    external: true
